@@ -12,12 +12,15 @@
 
 int main(int argc, char **argv)
 {
-  SimpleProfiler global_profiler;
-
   // выполняем разбор параметров командной строки
   CbowCommandLineParameters cmdLineParams;
   cmdLineParams.parse(argc, argv);
   cmdLineParams.dbg_cout();
+
+  if (!cmdLineParams.isDefined("-words-vocab") || !cmdLineParams.isDefined("-train") || !cmdLineParams.isDefined("-output"))
+    return 0;
+
+  SimpleProfiler global_profiler;
 
   // загрузка словаря
   std::shared_ptr< OriginalWord2VecVocabulary> v = std::make_shared< OriginalWord2VecVocabulary>();
