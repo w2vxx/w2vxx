@@ -11,11 +11,11 @@ public:
     // initialize params mapping with std::initialzer_list<T>
     params_ = {
         {"-words-vocab",  {"The words vocabulary will be read from <file>", std::nullopt, std::nullopt}},
-        {"-ctx-vocab",    {"The contexts vocabulary will be read from <file>", std::nullopt, std::nullopt}},
-        {"-min-count",    {"This will discard words that appear less than <int> times", "5", std::nullopt}},
+//        {"-ctx-vocab",    {"The contexts vocabulary will be read from <file>", std::nullopt, std::nullopt}},
+//        {"-min-count",    {"This will discard words that appear less than <int> times", "5", std::nullopt}},
         {"-train",        {"Use text data from <file> to train the model", std::nullopt, std::nullopt}},
-        {"-backup",       {"Save neural network weights to <file>", std::nullopt, std::nullopt}},
-        {"-restore",      {"Restore neural network weights from <file>", std::nullopt, std::nullopt}},
+//        {"-backup",       {"Save neural network weights to <file>", std::nullopt, std::nullopt}},
+//        {"-restore",      {"Restore neural network weights from <file>", std::nullopt, std::nullopt}},
         {"-output",       {"Use <file> to save the resulting word vectors", std::nullopt, std::nullopt}},
         {"-size",         {"Set size of word vectors", "100", std::nullopt}},
         {"-window",       {"Set max skip length between words", "5", std::nullopt}},

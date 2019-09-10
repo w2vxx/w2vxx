@@ -46,7 +46,8 @@ public:
     if (optimization_algo == loaHierarchicalSoftmax)  // hierarchical softmax
     {
       auto&& current_word_data = w_vocabulary->idx_to_data(le.word);
-      for (size_t d = 0; d < current_word_data.huffman_code_float.size(); ++d)
+      const size_t huffman_code_len = current_word_data.huffman_code_float.size();
+      for (size_t d = 0; d < huffman_code_len; ++d)
       {
         // вычисляем смещение вектора, соответствующего очередному узлу в дереве Хаффмана
         float *nodeVectorPtr = syn1 + current_word_data.huffman_path[d] * layer1_size;
@@ -66,16 +67,17 @@ public:
     }
     else if (optimization_algo == loaNegativeSampling) // negative sampling
     {
-      for (size_t d = 0; d < negative + 1; ++d)
+      size_t target;
+      int label; // знаковое целое (!)
+      float g = 0.0;
+      for (size_t d = 0; d <= negative; ++d)
       {
-        size_t target;
-        int label; // знаковое целое
-        if (d == 0)
+        if (d == 0) // на первой итерации рассматриваем положительный пример
         {
           target = le.word;
           label = 1;
         }
-        else
+        else // на остальных итерациях рассматриваем отрицательные примеры (шум)
         {
           next_random_ns = next_random_ns * (unsigned long long)25214903917 + 11;
           target = table[(next_random_ns >> 16) % table_size];
@@ -83,18 +85,18 @@ public:
           if (target == le.word) continue;
           label = 0;
         }
-        long long l2 = target * layer1_size;
-        float f = 0;
-        for (size_t c = 0; c < layer1_size; ++c)
-          f += neu1[c] * syn1[c + l2];
-        float g = 0;
+        // вычисляем смещение вектора, соответствующего очередному положительному/отрицательному примеру
+        float *targetVectorPtr = syn1 + target * layer1_size;
+        // вычисляем выход соответствующего нейрона выходного слоя (hidden -> output)
+        float f = std::inner_product(neu1, neu1+layer1_size, targetVectorPtr, 0.0);
+        // вычислим градиент умноженный на коэффициент скорости обучения
         if (f > MAX_EXP) g = (label - 1) * alpha;
         else if (f < -MAX_EXP) g = (label - 0) * alpha;
         else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
-        for (size_t c = 0; c < layer1_size; ++c)
-          neu1e[c] += g * syn1[c + l2];
-        for (size_t c = 0; c < layer1_size; ++c)
-          syn1[c + l2] += g * neu1[c];
+        // Propagate errors output -> hidden
+        std::transform(neu1e, neu1e+layer1_size, targetVectorPtr, neu1e, [g](float a, float b) -> float {return a + g*b;});
+        // Learn weights hidden -> output
+        std::transform(targetVectorPtr, targetVectorPtr+layer1_size, neu1, targetVectorPtr, [g](float a, float b) -> float {return a + g*b;});
       }
     }
     // коррекция весов между входным и скрытым слоем (обратное распространение ошибки на участке hidden -> in)

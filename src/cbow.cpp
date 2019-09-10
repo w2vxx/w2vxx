@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 
   // сохраняем вычисленные вектора в файл
   trainer.saveEmbeddings( cmdLineParams.getAsString("-output") );
-  if (cmdLineParams.isDefined("-backup"))
-    trainer.backup( cmdLineParams.getAsString("-backup") );
+//  if (cmdLineParams.isDefined("-backup"))
+//    trainer.backup( cmdLineParams.getAsString("-backup") );
 
   return 0;
 }
