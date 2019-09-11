@@ -1,7 +1,6 @@
 #include <memory>
 #include <string>
 #include <thread>
-#include <chrono>
 #include "simple_profiler.h"
 #include "cbow_command_line_parameters.h"
 #include "original_word2vec_vocabulary.h"
