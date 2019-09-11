@@ -127,7 +127,7 @@ int main(int argc, char **argv)
   std::multimap<uint64_t, std::string> revDict;
   for (auto& i : dict)
     revDict.insert( std::pair<uint64_t, std::string>(i.second, i.first) );
-  // сохраняем словаь в файл
+  // сохраняем словарь в файл
   FILE *fo = fopen(cmdLineParams.getAsString("-save-vocab").c_str(), "wb");
   fprintf(fo, "%s %lu\n", "</s>", eolCount);
   for (auto it = revDict.crbegin(), itEnd = revDict.crend(); it != itEnd; ++it)
