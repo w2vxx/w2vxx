@@ -1,0 +1,29 @@
+CXX=cl
+CXXFLAGS=-std:c++17 /O2 /Oi /MD -DNDEBUG
+
+all: cbow.exe skip-gram.exe build_dict.exe distance.exe
+
+cbow.exe: 
+	if exist $@ del $@
+	cl /nologo /c /EHsc /Fosrc\ $(CXXFLAGS) src/cbow.cpp
+	link /nologo /SUBSYSTEM:CONSOLE /OUT:$@ src/cbow.obj
+skip-gram.exe: 
+	if exist $@ del $@
+	cl /nologo /c /EHsc /Fosrc\ $(CXXFLAGS) src/sg.cpp
+	link /nologo /SUBSYSTEM:CONSOLE /OUT:$@ src/sg.obj
+build_dict.exe: 
+	if exist $@ del $@
+	cl /nologo /c /EHsc /Fosrc\ $(CXXFLAGS) src/build_dict.cpp
+	link /nologo /SUBSYSTEM:CONSOLE /OUT:$@ src/build_dict.obj
+distance.exe: 
+	if exist $@ del $@
+	cl /nologo /c /EHsc /Fosrc\ $(CXXFLAGS) src/distance.cpp
+	link /nologo /SUBSYSTEM:CONSOLE /OUT:$@ src/distance.obj
+
+clean:
+	-if exist src\*.obj del src\*.obj
+	-if exist cbow.exe del cbow.exe
+	-if exist skip-gram.exe del skip-gram.exe
+	-if exist build_dict.exe del build_dict.exe
+	-if exist distance.exe del distance.exe
+

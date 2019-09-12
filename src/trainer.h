@@ -6,6 +6,13 @@
 #include <chrono>
 #include <iostream>
 
+#ifdef _MSC_VER
+  #define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ? 0 : errno)
+  #define free_aligned(p) _aligned_free((p))
+#else
+  #define free_aligned(p) free((p))
+#endif
+
 
 #define EXP_TABLE_SIZE 1000
 #define MAX_EXP 6
@@ -65,9 +72,9 @@ public:
   {
     free(expTable);
     if (syn0)
-      free(syn0);
+      free_aligned(syn0);
     if (syn1)
-      free(syn1);
+      free_aligned(syn1);
     if (table)
       free(table);
   }
