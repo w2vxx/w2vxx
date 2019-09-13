@@ -22,7 +22,7 @@ public:
         {"-sample",       {"Set threshold for occurrence of words. Those that appear with higher frequency in the training data will be randomly down-sampled", "1e-3", std::nullopt}},
         {"-optimization", {"Optimization method: hierarchical softmax (hs) or negative sampling (ns)", "ns", std::nullopt}},
         {"-negative",     {"Number of negative examples", "5", std::nullopt}},
-        {"-alpha",        {"Set the starting learning rate", "0.05", std::nullopt}},
+        {"-alpha",        {"Set the starting learning rate", "0.025", std::nullopt}},
         {"-iter",         {"Run more training iterations", "5", std::nullopt}},
         {"-threads",      {"Use <int> threads", "12", std::nullopt}}
     };

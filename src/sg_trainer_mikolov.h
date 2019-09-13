@@ -18,7 +18,7 @@ public:
                      std::shared_ptr< CustomVocabulary > contexts_vocabulary,
                      size_t embedding_size = 100,
                      size_t epochs = 5,
-                     float learning_rate = 0.05,
+                     float learning_rate = 0.025,
                      const std::string& optimization = "ns",
                      size_t negative_count = 5 )
   : CustomTrainer(learning_example_provider, words_vocabulary, contexts_vocabulary, words_vocabulary, contexts_vocabulary, embedding_size, epochs, learning_rate, optimization, negative_count)
