@@ -30,7 +30,7 @@ public:
   virtual ~SgTrainer_Mikolov()
   {
   }
-  // функция, реализующая модель обучения cbow
+  // функция, реализующая модель обучения skip-gram
   void learning_model(const LearningExample& le, float *neu1, float *neu1e)
   {
     if (le.context.size() == 0) return;
