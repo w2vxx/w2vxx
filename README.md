@@ -106,3 +106,20 @@ w2vxx создан с целью повысить модульность и уп
     <td>количество выводимых на экран слов с близкими значениями.</td>
   </tr>
 </table>
+
+## Внутреннее устройство
+Код утилит cbow и skip-gram организован следующим образом.
+
+Программная логика, отвечающая за работу со словарём, инкапсулирована в классах `OriginalWord2VecVocabulary` и `CustomVocabulary`.
+
+Интерфейсом к обучающему множеству служат классы `OriginalWord2VecLearningExampleProvider` и `CustomLearningExampleProvider`. Их задача — предоставить обучающей логике очередной обучающий пример в виде структуры, содержащей слово и его контекст.
+
+```cpp
+struct LearningExample
+{
+  size_t word;                     // индекс слова в словаре
+  std::vector<size_t> context;     // индексы слов контекста
+};
+```
+
+За создание и обучение нейросети отвечают классы `CustomTrainer`, `CbowTrainer_Mikolov` и `SgTrainer_Mikolov`. Точкой входа для потоков (thread) служит метод `CustomTrainer::train_entry_point`. Обработка обучающего примера нейросетью выполняется в методах `learning_model` (содержание этого метода зависит от модели обучения: cbow или skip-gram).
