@@ -202,7 +202,7 @@ private:
       t_environment.sentence.push_back( wordIdx );
       if (t_environment.sentence.size() >= MAX_SENTENCE_LENGTH) break;
     }
-    // на настал ли конец эпохи?
+    // не настал ли конец эпохи?
     if ( feof(t_environment.fi) || (t_environment.words_count > train_words / threads_count) )
     {
       t_environment.sentence.clear();
