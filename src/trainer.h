@@ -87,7 +87,7 @@ public:
     unsigned long long next_random = 1;
 
     ap = posix_memalign((void **)&syn0, 128, (long long)in_vocab_size * layer1_size * sizeof(float));
-    if (syn0 == NULL || ap != 0) {printf("Memory allocation failed\n"); exit(1);}
+    if (syn0 == nullptr || ap != 0) {std::cerr << "Memory allocation failed" << std::endl; exit(1);}
     for (size_t a = 0; a < in_vocab_size; ++a)
       for (size_t b = 0; b < layer1_size; ++b)
       {
@@ -96,7 +96,7 @@ public:
       }
 
     ap = posix_memalign((void **)&syn1, 128, (long long)out_vocab_size * layer1_size * sizeof(float));
-    if (syn1 == NULL || ap != 0) {printf("Memory allocation failed\n"); exit(1);}
+    if (syn1 == nullptr || ap != 0) {std::cerr << "Memory allocation failed" << std::endl; exit(1);}
     for (size_t a = 0; a < out_vocab_size; ++a)
       for (size_t b = 0; b < layer1_size; ++b)
         syn1[a * layer1_size + b] = 0;
@@ -107,7 +107,7 @@ public:
     {}
     else
     {
-      std::cout << "Unknown learning optimization algorithm" << std::endl;
+      std::cerr << "Unknown learning optimization algorithm" << std::endl;
       exit(1);
     }
     start_learning_tp = std::chrono::steady_clock::now();
@@ -270,6 +270,16 @@ private:
       fprintf(fo, "%s ", vocabulary->idx_to_data(a).word.c_str());
       for (size_t b = 0; b < layer1_size; ++b)
         fwrite(&weight_matrix[a * layer1_size + b], sizeof(float), 1, fo);
+      fprintf(fo, "\n");
+    }
+  }
+  void saveEmbeddingsTxt_helper(FILE *fo, std::shared_ptr< CustomVocabulary > vocabulary, float *weight_matrix) const
+  {
+    for (size_t a = 0; a < vocabulary->size(); ++a)
+    {
+      fprintf(fo, "%s", vocabulary->idx_to_data(a).word.c_str());
+      for (size_t b = 0; b < layer1_size; ++b)
+        fprintf(fo, " %lf", weight_matrix[a * layer1_size + b]);
       fprintf(fo, "\n");
     }
   }

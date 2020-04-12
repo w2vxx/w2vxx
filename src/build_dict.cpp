@@ -55,9 +55,9 @@ int main(int argc, char **argv)
 
   // открываем файл с тренировочными данными
   FILE *fi = fopen(cmdLineParams.getAsString("-train").c_str(), "rb");
-  if ( fi == NULL )
+  if ( fi == nullptr )
   {
-    std::cout << "Train-file open: error: " << std::strerror(errno) << std::endl;
+    std::cerr << "Train-file open: error: " << std::strerror(errno) << std::endl;
     return 0;
   }
 

@@ -31,7 +31,7 @@ public:
     std::ifstream ifs( filename );
     if (!ifs.good())
     {
-      std::cout << "Can't open vocabulary file: " << filename << std::endl;
+      std::cerr << "Can't open vocabulary file: " << filename << std::endl;
       return false;
     }
     std::string buf;
@@ -46,8 +46,8 @@ public:
       };
       if (vocabulary_record_components.size() != 2)
       {
-        std::cout << "Vocabulary loading error: " << filename << std::endl;
-        std::cout << "Invalid record: " << buf << std::endl;
+        std::cerr << "Vocabulary loading error: " << filename << std::endl;
+        std::cerr << "Invalid record: " << buf << std::endl;
         return false;
       }
       vocabulary_hash[vocabulary_record_components[0]] = vocabulary.size(); // сразу строим хэш-отображение для поиска индекса слова в словаре по слову (строке)

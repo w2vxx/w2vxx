@@ -60,7 +60,10 @@ public:
   uint64_t cn_sum() const
   {
     //return std::reduce(vocabulary.cbegin(), vocabulary.cend(), 0, [](const uint64_t& sum, const VocabularyData& r) -> uint64_t { return sum + r.cn; });
-    return std::accumulate(vocabulary.cbegin(), vocabulary.cend(), 0, [](const uint64_t& sum, const VocabularyData& r) -> uint64_t { return sum + r.cn; });
+    //return std::accumulate(vocabulary.cbegin(), vocabulary.cend(), 0, [](const uint64_t& sum, const VocabularyData& r) -> uint64_t { return sum + r.cn; });
+    return std::accumulate( vocabulary.cbegin(), vocabulary.cend(),
+                            static_cast<uint64_t>(0),
+                            [](const uint64_t& sum, const VocabularyData& r) -> uint64_t { return sum + r.cn; } );
   }
   // построение дерева Хаффмана, вычисление кодов Хаффмана и путей для каждого слова/контекста
   // !!! изнчально предполагается, что вектор vocabulary отсортирован по убыванию cn

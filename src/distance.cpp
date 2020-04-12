@@ -24,7 +24,7 @@ bool loadModel(const std::string& model_filename, uint64_t& words, uint64_t& siz
   std::getline(ifs,buf); // считываем конец строки
   // выделяем память для эмбеддингов
   embeddings = (float *) malloc( words * size * sizeof(float) );
-  if (embeddings == NULL)
+  if (embeddings == nullptr)
   {
     std::cerr << "Cannot allocate memory: " << (words * size * sizeof(float) / 1048576) << " MB" << std::endl;
     std::cerr << "    Words: " << words << std::endl;

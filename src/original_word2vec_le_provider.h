@@ -24,12 +24,16 @@ struct ThreadEnvironment_w2v
   unsigned long long next_random;        // поле для вычисления случайных величин
   unsigned long long words_count;        // количество прочитанных словарных слов
   ThreadEnvironment_w2v()
-  : fi(NULL)
+  : fi(nullptr)
   , position_in_sentence(-1)
   , next_random(0)
   , words_count(0)
   {
     sentence.reserve(MAX_SENTENCE_LENGTH);
+  }
+  inline void update_random()
+  {
+    next_random = next_random * (unsigned long long)25214903917 + 11;
   }
 };
 
@@ -56,7 +60,7 @@ public:
     {
       train_file_size = get_file_size(train_filename);
     } catch (const std::runtime_error& e) {
-      std::cout << "LearningExampleProvider can't get file size for: " << train_filename << "\n  " << e.what() << std::endl;
+      std::cerr << "LearningExampleProvider can't get file size for: " << train_filename << "\n  " << e.what() << std::endl;
     }
   } // constructor-end
   // деструктор
@@ -68,15 +72,15 @@ public:
   {
     auto& t_environment = thread_environment[threadIndex];
     t_environment.fi = fopen(train_filename.c_str(), "rb");
-    if ( t_environment.fi == NULL )
+    if ( t_environment.fi == nullptr )
     {
-      std::cout << "LearningExampleProvider: epoch prepare error: " << std::strerror(errno) << std::endl;
+      std::cerr << "LearningExampleProvider: epoch prepare error: " << std::strerror(errno) << std::endl;
       return false;
     }
     int succ = fseek(t_environment.fi, train_file_size / threads_count * threadIndex, SEEK_SET);
     if (succ != 0)
     {
-      std::cout << "LearningExampleProvider: epoch prepare error: " << std::strerror(errno) << std::endl;
+      std::cerr << "LearningExampleProvider: epoch prepare error: " << std::strerror(errno) << std::endl;
       return false;
     }
     t_environment.sentence.clear();
@@ -101,7 +105,7 @@ public:
       return std::nullopt;
     LearningExample result;
     result.word = t_environment.sentence[t_environment.position_in_sentence];
-    t_environment.next_random = t_environment.next_random * (unsigned long long)25214903917 + 11;
+    t_environment.update_random();
     auto current_window = t_environment.next_random % window;
 
     // можно сделать так:
@@ -190,13 +194,17 @@ private:
       auto wordIdx = vocabulary->word_to_idx(word);
       if (wordIdx == std::numeric_limits<size_t>::max()) continue;  // несловарное слово
       ++t_environment.words_count;
-      if (wordIdx == 0) break;                                      // маркер конца предложения/параграфа
+      if ( wordIdx == 0 )   // маркер конца параграфа (предложения)
+      {
+        if ( t_environment.sentence.empty() ) continue; //  пустые предложения игнорируем (т.к. пустое предложение -- это ещё и признак окончания эпохи)
+        else break;
+      }
       // The subsampling randomly discards frequent words while keeping the ranking same
       if (sample > 0)
       {
         auto&& dict_word = vocabulary->idx_to_data(wordIdx);
         float ran = (sqrt(dict_word.cn / (sample * train_words)) + 1) * (sample * train_words) / dict_word.cn;
-        t_environment.next_random = t_environment.next_random * (unsigned long long)25214903917 + 11;
+        t_environment.update_random();
         if (ran < (t_environment.next_random & 0xFFFF) / (float)65536) continue;
       }
       t_environment.sentence.push_back( wordIdx );
